@@ -31,6 +31,7 @@
                 :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"
                 :rules="[passwordRules.required, passwordRules.min]"
                 @click:append="showPass = !showPass"
+                autocomplete="on"
               ></v-text-field>
             </v-form>
           </v-card-text>
