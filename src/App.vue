@@ -1,11 +1,11 @@
 <template>
   <v-app>
-    <v-navigation-drawer app temporary
+    <v-navigation-drawer app
       v-model="drawer">
       <v-list>
         <v-list-item
-          v-for="link of links"
-          :key="link.title"
+          v-for="(link, i) of links"
+          :key="i"
           :to="link.url">
           <v-list-item-icon>
             <v-icon>
@@ -40,12 +40,8 @@
           {{ link.title }}</v-btn>
       </v-toolbar-items>
     </v-app-bar>
-
-    <!-- Sizes your content based upon application components -->
     <v-main>
-
-      <!-- If using vue-router -->
-      <router-view class="mt-5"></router-view>
+      <router-view></router-view>
     </v-main>
   </v-app>
 </template>
