@@ -24,7 +24,11 @@
       @click="drawer = !drawer"
       class="hidden-md-and-up"
       ></v-app-bar-nav-icon>
-      <v-toolbar-title>Ad application</v-toolbar-title>
+      <v-toolbar-title>
+        <router-link to="/" custom v-slot="{ navigate }" class="pointer">
+          <span @click="navigate" role="link">Ad application</span>
+        </router-link>
+      </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
         <v-btn
@@ -52,9 +56,9 @@ export default {
     return {
       drawer: false,
       links: [
-        { title: 'Login', icon: 'mdi-lock', url: '/login' },
-        { title: 'Registration', icon: 'mdi-face', url: '/registration' },
-        { title: 'Orders', icon: 'mdi-bookmark-outline', url: '/orders' },
+        { title: 'Login', icon: 'mdi-account-tie', url: '/login' },
+        { title: 'Registration', icon: 'mdi-human-handsup', url: '/registration' },
+        { title: 'Orders', icon: 'mdi-cards-diamond', url: '/orders' },
         { title: 'New ad', icon: 'mdi-note-plus', url: '/new' },
         { title: 'My ads', icon: 'mdi-format-list-bulleted-square', url: '/list' }
       ]
@@ -62,3 +66,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.pointer {
+  cursor: pointer;
+}
+</style>

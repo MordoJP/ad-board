@@ -13,7 +13,7 @@
               validation
             >
               <v-text-field
-                prepend-icon="mdi-account"
+                prepend-icon="mdi-card-account-mail"
                 name="email"
                 label="Email"
                 type="email"
