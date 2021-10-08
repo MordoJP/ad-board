@@ -19,7 +19,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar app dark color="primary">
+    <v-app-bar app dark color="indigo darken-1">
       <v-app-bar-nav-icon
       @click="drawer = !drawer"
       class="hidden-md-and-up"

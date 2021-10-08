@@ -3,7 +3,7 @@
     <v-layout align-center justify-center>
       <v-flex xs12 sm8 md6>
         <v-card class="elevation-12">
-          <v-toolbar dark color="primary">
+          <v-toolbar dark color="indigo accent-2">
             <v-toolbar-title>Login form</v-toolbar-title>
           </v-toolbar>
           <v-card-text>
@@ -38,7 +38,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
-              color="primary"
+              color="indigo darken-3 white--text"
               @click="onSubmit"
               :disabled="!valid"
             >Login</v-btn>

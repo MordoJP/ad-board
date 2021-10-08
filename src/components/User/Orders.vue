@@ -17,8 +17,7 @@
               <v-checkbox
                 :input-value="order.done"
                 @change="markDone(order)"
-                @click="test"
-                color="indigo darken-3"
+                color="indigo accent-2"
               ></v-checkbox>
             </v-list-item-action>
             <v-list-item-content>
@@ -57,9 +56,6 @@ export default {
   methods: {
     markDone (order) {
       order.done = true
-    },
-    test (event) {
-      console.log(event.target.status)
     }
   }
 }
