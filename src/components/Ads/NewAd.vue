@@ -94,10 +94,11 @@ export default {
         const ad = {
           title: this.title,
           description: this.description,
-          promo: this.promo
+          promo: this.promo,
+          imageSrc: 'https://cs.pikabu.ru/post_img/big/2013/09/12/10/1379001700_1984789034.jpg'
         }
 
-        console.log(ad)
+        this.$store.dispatch('createAd', ad)
       }
     }
   },
