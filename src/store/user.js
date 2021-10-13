@@ -46,8 +46,9 @@ export default {
       commit('setUser', new User(payload.uid))
     },
     logoutUser ({ commit }) {
-      signOut(getAuth())
-      commit('setUser', null)
+      signOut(getAuth()).then(() => {
+        commit('setUser', null)
+      })
     }
   },
   getters: {

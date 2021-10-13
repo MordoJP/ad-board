@@ -99,6 +99,11 @@ export default {
           .catch(err => console.log(err.code))
       }
     }
+  },
+  created () {
+    if (this.$route.query.loginError) {
+      this.$store.dispatch('setError', 'no-access-right')
+    }
   }
 }
 </script>

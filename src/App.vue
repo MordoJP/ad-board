@@ -61,7 +61,7 @@
       </v-toolbar-items>
     </v-app-bar>
     <v-main>
-      <router-view></router-view>
+      <router-view class="view"></router-view>
     </v-main>
 
     <template v-if="error">
@@ -132,5 +132,11 @@ export default {
 <style scoped>
 .pointer {
   cursor: pointer;
+}
+
+@media screen and (max-width: 599px) {
+  .view {
+    max-width: 90%;
+  }
 }
 </style>

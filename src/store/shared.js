@@ -10,6 +10,10 @@ export default {
       {
         code: 'auth/wrong-password',
         errorEng: 'The password is invalid. Please try again.'
+      },
+      {
+        code: 'no-access-right',
+        errorEng: 'Please log in to access this page.'
       }
     ]
   },
