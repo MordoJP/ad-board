@@ -16,6 +16,19 @@
             <v-list-item-title v-text="link.title"></v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item
+          @click="onLogout"
+          v-if="isUserLoggedIn"
+        >
+          <v-list-item-icon>
+            <v-icon>
+              mdi-location-exit
+            </v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title v-text="'Logout'"></v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
@@ -38,6 +51,13 @@
           text>
           <v-icon left>{{ link.icon }}</v-icon>
           {{ link.title }}</v-btn>
+        <v-btn
+          @click="onLogout"
+          text
+          v-if="isUserLoggedIn"
+        >
+          <v-icon left>mdi-location-exit</v-icon>
+          Logout</v-btn>
       </v-toolbar-items>
     </v-app-bar>
     <v-main>
@@ -100,6 +120,10 @@ export default {
   methods: {
     closeError () {
       this.$store.dispatch('clearError')
+    },
+    onLogout () {
+      this.$store.dispatch(('logoutUser'))
+      this.$router.push('/')
     }
   }
 }

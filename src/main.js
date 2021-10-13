@@ -5,6 +5,7 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import { initializeApp } from 'firebase/app'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@mdi/font/css/materialdesignicons.css'
 import Vuelidate from 'vuelidate'
@@ -26,6 +27,11 @@ new Vue({
       messagingSenderId: '131024350818',
       appId: '1:131024350818:web:68c3c516e698a30aae6b3b',
       measurementId: 'G-XG10YRM6WB'
+    })
+    onAuthStateChanged(getAuth(), user => {
+      if (user) {
+        this.$store.dispatch('autoLoginUser', user)
+      }
     })
   }
 }).$mount('#app')

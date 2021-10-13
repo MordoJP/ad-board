@@ -1,4 +1,4 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 
 class User {
   constructor (id) {
@@ -41,6 +41,13 @@ export default {
         commit('setError', error.code)
         throw error
       }
+    },
+    autoLoginUser ({ commit }, payload) {
+      commit('setUser', new User(payload.uid))
+    },
+    logoutUser ({ commit }) {
+      signOut(getAuth())
+      commit('setUser', null)
     }
   },
   getters: {
