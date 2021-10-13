@@ -23,10 +23,10 @@ export default {
         const user = await createUserWithEmailAndPassword(getAuth(), email, password)
         commit('setUser', new User(user.uid))
         commit('setLoading', false)
-      } catch (err) {
+      } catch (error) {
         commit('setLoading', false)
-        commit('setError', err.message)
-        throw err
+        commit('setError', error.code)
+        throw error
       }
     },
     async loginUser ({ commit }, { email, password }) {
@@ -36,16 +36,19 @@ export default {
         const user = await signInWithEmailAndPassword(getAuth(), email, password)
         commit('setUser', new User(user.uid))
         commit('setLoading', false)
-      } catch (err) {
+      } catch (error) {
         commit('setLoading', false)
-        commit('setError', err.message)
-        throw err
+        commit('setError', error.code)
+        throw error
       }
     }
   },
   getters: {
     user (state) {
       return state.user
+    },
+    isUserLoggedIn (state) {
+      return state.user !== null
     }
   }
 }

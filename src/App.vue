@@ -43,6 +43,29 @@
     <v-main>
       <router-view></router-view>
     </v-main>
+
+    <template v-if="error">
+      <v-snackbar
+        :multi-line="true"
+        :timeout="5000"
+        color="error"
+        @input="closeError"
+        value="true"
+      >
+        {{ error }}
+
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            dark
+            text
+            v-bind="attrs"
+            @click.native="closeError"
+          >
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
+    </template>
   </v-app>
 </template>
 
@@ -50,14 +73,33 @@
 export default {
   data () {
     return {
-      drawer: false,
-      links: [
+      drawer: false
+    }
+  },
+  computed: {
+    error () {
+      return this.$store.getters.error
+    },
+    isUserLoggedIn () {
+      return this.$store.getters.isUserLoggedIn
+    },
+    links () {
+      if (this.isUserLoggedIn) {
+        return [
+          { title: 'Orders', icon: 'mdi-cards-diamond', url: '/orders' },
+          { title: 'New ad', icon: 'mdi-note-plus', url: '/new' },
+          { title: 'My ads', icon: 'mdi-format-list-bulleted-square', url: '/list' }
+        ]
+      }
+      return [
         { title: 'Login', icon: 'mdi-account-tie', url: '/login' },
-        { title: 'Registration', icon: 'mdi-human-handsup', url: '/registration' },
-        { title: 'Orders', icon: 'mdi-cards-diamond', url: '/orders' },
-        { title: 'New ad', icon: 'mdi-note-plus', url: '/new' },
-        { title: 'My ads', icon: 'mdi-format-list-bulleted-square', url: '/list' }
+        { title: 'Registration', icon: 'mdi-human-handsup', url: '/registration' }
       ]
+    }
+  },
+  methods: {
+    closeError () {
+      this.$store.dispatch('clearError')
     }
   }
 }
