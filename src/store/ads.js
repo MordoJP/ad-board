@@ -1,4 +1,4 @@
-import { getDatabase, ref, push, set } from 'firebase/database'
+import { getDatabase, ref, push, set, onValue } from 'firebase/database'
 
 class Ad {
   constructor (title, description, ownedId, imageSrc = '', promo = false, id = null) {
@@ -13,58 +13,24 @@ class Ad {
 
 export default {
   state: {
-    ads: [
-      {
-        title: 'First ad',
-        description: 'Hello i am description',
-        promo: false,
-        showInfo: false,
-        imageSrc: 'https://images.unsplash.com/photo-1619006179863-f65e2b0c8fba?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1770&q=80',
-        id: '123'
-      },
-      {
-        title: 'Second ad',
-        description: 'Hello i am description',
-        promo: true,
-        showInfo: false,
-        imageSrc: 'https://images.unsplash.com/photo-1618489517037-66555962ff37?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80',
-        id: '1234'
-      },
-      {
-        title: 'Third ad',
-        description: 'Hello i am description',
-        promo: true,
-        showInfo: false,
-        imageSrc: 'https://images.unsplash.com/photo-1511878587934-516d7ca5465b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1830&q=80',
-        id: '12345'
-      },
-      {
-        title: 'Fourth ad',
-        description: 'Hello i am description',
-        promo: true,
-        showInfo: false,
-        imageSrc: 'https://images.unsplash.com/photo-1481277542470-605612bd2d61?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1706&q=80',
-        id: '123456'
-      },
-      {
-        title: 'Fifth ad',
-        description: 'Hello i am description',
-        promo: true,
-        showInfo: false,
-        imageSrc: 'https://images.unsplash.com/photo-1502920970741-47c1bafc8d49?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1770&q=80',
-        id: '1234567'
-      }
-    ]
+    ads: []
   },
   mutations: {
     createAd (state, payload) {
       state.ads.push(payload)
+    },
+    loadAds (state, payload) {
+      state.ads = payload
     }
   },
   actions: {
     async createAd ({ commit, getters }, payload) {
       commit('clearError')
       commit('setLoading', true)
+
+      const db = getDatabase()
+      const postListRef = ref(db, 'ads')
+      const newPostRef = push(postListRef)
 
       try {
         const newAd = new Ad(
@@ -74,9 +40,6 @@ export default {
           payload.imageSrc,
           payload.promo
         )
-        const db = getDatabase()
-        const postListRef = ref(db, 'ads')
-        const newPostRef = push(postListRef)
         // в уроке был await, но с ним не работает. В документации ничего толком не нашел про set
         set(newPostRef, newAd)
 
@@ -89,6 +52,37 @@ export default {
         commit('setError', error.code)
         commit('setLoading', false)
         throw error
+      }
+    },
+    async fetchAds ({ commit }) {
+      commit('clearError')
+      commit('setLoading', true)
+
+      const db = getDatabase()
+      const postListRef = ref(db, 'ads')
+
+      const resultAds = []
+
+      try {
+        await onValue(postListRef, (fbVal) => {
+          const ads = fbVal.val()
+
+          Object.keys(ads).forEach(key => {
+            const ad = ads[key]
+            resultAds.push(
+              new Ad(ad.title, ad.description, ad.ownedId, ad.imageSrc, ad.promo, key)
+            )
+          })
+          commit('loadAds', resultAds)
+          console.log(ads)
+        }, {
+          onlyOnce: true
+        })
+        commit('setLoading', false)
+      } catch (e) {
+        commit('setError', e.code)
+        commit('setLoading', false)
+        throw e
       }
     }
   },
