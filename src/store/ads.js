@@ -1,3 +1,16 @@
+import { getDatabase, ref, push, set } from 'firebase/database'
+
+class Ad {
+  constructor (title, description, ownedId, imageSrc = '', promo = false, id = null) {
+    this.title = title
+    this.description = description
+    this.ownedId = ownedId
+    this.imageSrc = imageSrc
+    this.promo = promo
+    this.id = id
+  }
+}
+
 export default {
   state: {
     ads: [
@@ -49,10 +62,34 @@ export default {
     }
   },
   actions: {
-    createAd ({ commit }, payload) {
-      payload.id = `${Math.floor(Math.random() * 1000)}`
+    async createAd ({ commit, getters }, payload) {
+      commit('clearError')
+      commit('setLoading', true)
 
-      commit('createAd', payload)
+      try {
+        const newAd = new Ad(
+          payload.title,
+          payload.description,
+          getters.user.id,
+          payload.imageSrc,
+          payload.promo
+        )
+        const db = getDatabase()
+        const postListRef = ref(db, 'ads')
+        const newPostRef = push(postListRef)
+        // в уроке был await, но с ним не работает. В документации ничего толком не нашел про set
+        set(newPostRef, newAd)
+
+        commit('setLoading', false)
+        commit('createAd', {
+          ...newAd,
+          id: newPostRef.key
+        })
+      } catch (error) {
+        commit('setError', error.code)
+        commit('setLoading', false)
+        throw error
+      }
     }
   },
   getters: {

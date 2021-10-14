@@ -22,7 +22,7 @@ export default {
       state.loading = payload
     },
     setError (state, payload) {
-      state.error = state.errors.filter(err => err.code === payload).map(el => el.errorEng).toString()
+      state.error = state.errors.filter(err => err.code === payload).map(el => el.errorEng).toString() || payload
     },
     clearError (state) {
       state.error = null

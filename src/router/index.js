@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import 'babel-polyfill'
 import AuthGuard from './auth-guard'
+import 'babel-polyfill'
 import Home from '@/components/Home'
 import Ad from '@/components/Ads/Ad'
 import AdList from '@/components/Ads/AdList'
