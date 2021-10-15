@@ -27,13 +27,11 @@
           ></v-textarea>
         </v-form>
         <v-layout row class="mb-3">
-          <v-flex>
+          <v-flex xs12>
             <v-btn
-              :loading="loading3"
-              :disabled="loading3"
               color="indigo darken-3"
               class="ma-2 white--text"
-              @click="loader = 'loading3'"
+              @click="triggerUpload"
             >
               Upload
               <v-icon
@@ -43,11 +41,18 @@
                 mdi-cloud-upload
               </v-icon>
             </v-btn>
+            <input
+              ref="fileInput"
+              type="file"
+              style="display: none"
+              accept="image/*"
+              @change="onFileChange"
+            >
           </v-flex>
         </v-layout>
         <v-layout row>
           <v-flex xs12>
-            <img src="https://images.unsplash.com/photo-1502920970741-47c1bafc8d49?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1770&q=80" height="100px">
+            <img :src="imageSrc" height="100px">
           </v-flex>
         </v-layout>
         <v-layout row>
@@ -64,7 +69,7 @@
             <v-spacer></v-spacer>
             <v-btn
               :loading="loading"
-              :disabled="!valid || loading"
+              :disabled="!valid || !image || loading"
               class="indigo darken-3 white--text"
               @click="createAd"
             >
@@ -86,7 +91,8 @@ export default {
       promo: false,
       valid: false,
       loader: null,
-      loading3: false
+      image: null,
+      imageSrc: ''
     }
   },
   computed: {
@@ -96,12 +102,12 @@ export default {
   },
   methods: {
     createAd () {
-      if (this.$refs.form.validate()) {
+      if (this.$refs.form.validate() && this.image) {
         const ad = {
           title: this.title,
           description: this.description,
           promo: this.promo,
-          imageSrc: 'https://cs.pikabu.ru/post_img/big/2013/09/12/10/1379001700_1984789034.jpg'
+          image: this.image
         }
 
         this.$store.dispatch('createAd', ad)
@@ -110,6 +116,19 @@ export default {
           })
           .catch(() => {})
       }
+    },
+    triggerUpload () {
+      this.$refs.fileInput.click()
+    },
+    onFileChange (evt) {
+      const file = evt.target.files[0]
+
+      const reader = new FileReader()
+      reader.onload = e => {
+        this.imageSrc = reader.result
+      }
+      reader.readAsDataURL(file)
+      this.image = file
     }
   },
   watch: {

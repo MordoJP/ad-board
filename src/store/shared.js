@@ -14,6 +14,14 @@ export default {
       {
         code: 'no-access-right',
         errorEng: 'Please log in to access this page.'
+      },
+      {
+        code: 'auth/network-request-failed',
+        errorEng: 'Network request failed.'
+      },
+      {
+        code: 'auth/timeout',
+        errorEng: 'Timeout.'
       }
     ]
   },

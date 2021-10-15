@@ -90,7 +90,7 @@
   <div v-else>
     <v-container>
       <v-layout row>
-        <v-flex xs-12 class="text-xs-center pt-5">
+        <v-flex xs-12 class="text-center pt-5">
           <v-progress-circular
             :size="120"
             :width="4"

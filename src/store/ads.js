@@ -1,4 +1,5 @@
-import { getDatabase, ref, push, set, onValue } from 'firebase/database'
+import { getDatabase, push, ref as refDb, set, onValue, update } from 'firebase/database'
+import { getStorage, ref as refStorage, uploadBytes, getDownloadURL } from 'firebase/storage'
 
 class Ad {
   constructor (title, description, ownedId, imageSrc = '', promo = false, id = null) {
@@ -28,25 +29,54 @@ export default {
       commit('clearError')
       commit('setLoading', true)
 
+      const image = payload.image
+
       const db = getDatabase()
-      const postListRef = ref(db, 'ads')
-      const newPostRef = push(postListRef)
+      const databaseRef = refDb(db, 'ads')
+      const newPostRef = push(databaseRef)
 
       try {
         const newAd = new Ad(
           payload.title,
           payload.description,
           getters.user.id,
-          payload.imageSrc,
+          '',
           payload.promo
         )
         // в уроке был await, но с ним не работает. В документации ничего толком не нашел про set
         set(newPostRef, newAd)
 
+        const imageExt = image.name.slice(image.name.lastIndexOf('.'))
+
+        // сохранение картинки на сервер
+        // как в уроке
+        // const fileData = await fb.storage().ref(`ads/${ad.key}.${imageExt}`).put(image)
+        // const imageSrc = fileData.metadata.downloadUrls[0]
+        // await fb.database().ref('ads').child(ad.key).update({
+        //   imageSrc
+        // })
+        const storage = getStorage()
+        const storageRef = refStorage(storage, `ads/${newPostRef.key}.${imageExt}`)
+        await uploadBytes(storageRef, image)
+        // Получаем ссылку на изображение
+        const imageSrc = await getDownloadURL(storageRef)
+          .then((url) => {
+            return url
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+
+        // обновляем ссылку в базе данных
+        const updates = {}
+        updates[newPostRef.key + '/imageSrc'] = imageSrc
+        await update(databaseRef, updates)
+
         commit('setLoading', false)
         commit('createAd', {
           ...newAd,
-          id: newPostRef.key
+          id: newPostRef.key,
+          imageSrc
         })
       } catch (error) {
         commit('setError', error.code)
@@ -59,12 +89,12 @@ export default {
       commit('setLoading', true)
 
       const db = getDatabase()
-      const postListRef = ref(db, 'ads')
+      const databaseRef = refDb(db, 'ads')
 
       const resultAds = []
 
       try {
-        await onValue(postListRef, (fbVal) => {
+        await onValue(databaseRef, (fbVal) => {
           const ads = fbVal.val()
 
           Object.keys(ads).forEach(key => {
@@ -74,7 +104,6 @@ export default {
             )
           })
           commit('loadAds', resultAds)
-          console.log(ads)
         }, {
           onlyOnce: true
         })
