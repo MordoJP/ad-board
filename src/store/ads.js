@@ -31,10 +31,6 @@ export default {
 
       const image = payload.image
 
-      const db = getDatabase()
-      const databaseRef = refDb(db, 'ads')
-      const newPostRef = push(databaseRef)
-
       try {
         const newAd = new Ad(
           payload.title,
@@ -43,20 +39,18 @@ export default {
           '',
           payload.promo
         )
+
+        const db = await getDatabase()
+        const databaseRef = await refDb(db, 'ads')
+        const newPostRef = await push(databaseRef)
         // в уроке был await, но с ним не работает. В документации ничего толком не нашел про set
         set(newPostRef, newAd)
 
         const imageExt = image.name.slice(image.name.lastIndexOf('.'))
 
         // сохранение картинки на сервер
-        // как в уроке
-        // const fileData = await fb.storage().ref(`ads/${ad.key}.${imageExt}`).put(image)
-        // const imageSrc = fileData.metadata.downloadUrls[0]
-        // await fb.database().ref('ads').child(ad.key).update({
-        //   imageSrc
-        // })
-        const storage = getStorage()
-        const storageRef = refStorage(storage, `ads/${newPostRef.key}.${imageExt}`)
+        const storage = await getStorage()
+        const storageRef = await refStorage(storage, `ads/${newPostRef.key}.${imageExt}`)
         await uploadBytes(storageRef, image)
         // Получаем ссылку на изображение
         const imageSrc = await getDownloadURL(storageRef)
@@ -88,8 +82,8 @@ export default {
       commit('clearError')
       commit('setLoading', true)
 
-      const db = getDatabase()
-      const databaseRef = refDb(db, 'ads')
+      const db = await getDatabase()
+      const databaseRef = await refDb(db, 'ads')
 
       const resultAds = []
 

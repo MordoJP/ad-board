@@ -93,8 +93,8 @@
         <v-flex xs-12 class="text-center pt-5">
           <v-progress-circular
             :size="120"
-            :width="4"
-            color="purple"
+            :width="10"
+            color="indigo lighten-2"
             indeterminate
           ></v-progress-circular>
         </v-flex>
