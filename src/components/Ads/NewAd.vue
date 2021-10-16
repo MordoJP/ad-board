@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="mt-5">
     <v-layout row>
       <v-flex xs12 sm6 offset-sm3>
         <h1 class="text--secondary mb-3">Create new ad</h1>
@@ -90,7 +90,6 @@ export default {
       description: '',
       promo: false,
       valid: false,
-      loader: null,
       image: null,
       imageSrc: ''
     }
@@ -129,16 +128,6 @@ export default {
       }
       reader.readAsDataURL(file)
       this.image = file
-    }
-  },
-  watch: {
-    loader () {
-      const l = this.loader
-      this[l] = !this[l]
-
-      setTimeout(() => (this[l] = false), 3000)
-
-      this.loader = null
     }
   }
 }

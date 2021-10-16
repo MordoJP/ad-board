@@ -50,38 +50,13 @@
               :src="ad.imageSrc"
               height="200px"
             ></v-img>
-
-            <v-card-title>
-              {{ ad.title }}
-            </v-card-title>
-
-            <v-card-subtitle>
-              {{ ad.description }}
-            </v-card-subtitle>
-
+            <v-card-title>{{ ad.title }}</v-card-title>
+            <v-card-subtitle>{{ ad.description }}</v-card-subtitle>
             <v-card-actions>
-              <v-btn
-                icon
-                @click="ad.showInfo = !ad.showInfo"
-              >
-                <v-icon>{{ ad.showInfo ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-              </v-btn>
-
               <v-spacer></v-spacer>
-
               <v-btn text :to="'/ad/' + ad.id"> Open </v-btn>
               <app-buy-modal :ad="ad"></app-buy-modal>
             </v-card-actions>
-
-            <v-expand-transition>
-              <div v-show="ad.showInfo">
-                <v-divider></v-divider>
-
-                <v-card-text>
-                  I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
-                </v-card-text>
-              </div>
-            </v-expand-transition>
           </v-card>
         </v-flex>
       </v-layout>

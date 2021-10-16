@@ -12,7 +12,7 @@ import Orders from '@/components/User/Orders'
 
 Vue.use(VueRouter)
 
-const router = new VueRouter({
+export default new VueRouter({
   mode: 'history',
   routes: [
     {
@@ -56,5 +56,3 @@ const router = new VueRouter({
     }
   ]
 })
-
-export default router

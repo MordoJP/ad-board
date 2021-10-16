@@ -21,14 +21,16 @@
                 name="name"
                 label="Your name"
                 type="text"
+                required
                 v-model="name"
               ></v-text-field>
-              <v-textarea
+              <v-text-field
                 name="phone"
                 label="Your phone"
                 type="text"
+                required
                 v-model="phone"
-              ></v-textarea>
+              ></v-text-field>
             </v-card-text>
           </v-flex>
         </v-layout>
@@ -79,6 +81,9 @@ export default {
       this.modal = false
     },
     onSave () {
+      console.log(this.ad)
+      // правильно ownerId
+      console.log(this.ad.ownerId)
       if (this.name !== '' && this.phone !== '') {
         this.localLoading = true
         this.$store.dispatch('createOrder', {

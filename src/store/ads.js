@@ -2,10 +2,10 @@ import { getDatabase, push, ref as refDb, set, onValue, update } from 'firebase/
 import { getStorage, ref as refStorage, uploadBytes, getDownloadURL } from 'firebase/storage'
 
 class Ad {
-  constructor (title, description, ownedId, imageSrc = '', promo = false, id = null) {
+  constructor (title, description, ownerId, imageSrc = '', promo = false, id = null) {
     this.title = title
     this.description = description
-    this.ownedId = ownedId
+    this.ownerId = ownerId
     this.imageSrc = imageSrc
     this.promo = promo
     this.id = id
@@ -66,7 +66,7 @@ export default {
             return url
           })
           .catch((error) => {
-            console.log(error)
+            commit('setError', error.code)
           })
 
         // обновляем ссылку в базе данных
@@ -80,29 +80,29 @@ export default {
           imageSrc
         })
         commit('setLoading', false)
-      } catch (e) {
-        commit('setError', e.code)
+      } catch (error) {
+        commit('setError', error.code)
         commit('setLoading', false)
-        throw e
+        throw error
       }
     },
     async fetchAds ({ commit }) {
       commit('clearError')
       commit('setLoading', true)
 
-      const db = await getDatabase()
-      const databaseRef = await refDb(db, 'ads')
-
       const resultAds = []
 
       try {
+        const db = await getDatabase()
+        const databaseRef = await refDb(db, 'ads')
+
         await onValue(databaseRef, (fbVal) => {
           const ads = fbVal.val()
 
           Object.keys(ads).forEach(key => {
             const ad = ads[key]
             resultAds.push(
-              new Ad(ad.title, ad.description, ad.ownedId, ad.imageSrc, ad.promo, key)
+              new Ad(ad.title, ad.description, ad.ownerId, ad.imageSrc, ad.promo, key)
             )
           })
         }, {
@@ -110,10 +110,10 @@ export default {
         })
         commit('setLoading', false)
         commit('loadAds', resultAds)
-      } catch (e) {
-        commit('setError', e.code)
+      } catch (error) {
+        commit('setError', error.code)
         commit('setLoading', false)
-        throw e
+        throw error
       }
     },
     async updateAd ({ commit }, { title, description, id }) {
@@ -121,7 +121,6 @@ export default {
       commit('setLoading', true)
 
       try {
-        commit('setLoading', false)
         const db = await getDatabase()
         const databaseRef = await refDb(db, 'ads')
         const updates = {}
@@ -132,6 +131,7 @@ export default {
         commit('updateAd', {
           title, description, id
         })
+        commit('setLoading', false)
       } catch (error) {
         commit('setError', error.code)
         commit('setLoading', false)
@@ -147,7 +147,7 @@ export default {
       return state.ads.filter(ad => ad.promo)
     },
     myAds (state, getters) {
-      return state.ads.filter(ad => ad.ownedId === getters.user.id)
+      return state.ads.filter(ad => ad.ownerId === getters.user.id)
     },
     adById (state) {
       return adId => state.ads.find(ad => ad.id === adId)
