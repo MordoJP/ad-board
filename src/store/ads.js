@@ -22,6 +22,14 @@ export default {
     },
     loadAds (state, payload) {
       state.ads = payload
+    },
+    updateAd (state, { title, description, id }) {
+      const ad = state.ads.find(a => {
+        return a.id === id
+      })
+
+      ad.title = title
+      ad.description = description
     }
   },
   actions: {
@@ -66,16 +74,16 @@ export default {
         updates[newPostRef.key + '/imageSrc'] = imageSrc
         await update(databaseRef, updates)
 
-        commit('setLoading', false)
         commit('createAd', {
           ...newAd,
           id: newPostRef.key,
           imageSrc
         })
-      } catch (error) {
-        commit('setError', error.code)
         commit('setLoading', false)
-        throw error
+      } catch (e) {
+        commit('setError', e.code)
+        commit('setLoading', false)
+        throw e
       }
     },
     async fetchAds ({ commit }) {
@@ -97,15 +105,37 @@ export default {
               new Ad(ad.title, ad.description, ad.ownedId, ad.imageSrc, ad.promo, key)
             )
           })
-          commit('loadAds', resultAds)
         }, {
           onlyOnce: true
         })
         commit('setLoading', false)
+        commit('loadAds', resultAds)
       } catch (e) {
         commit('setError', e.code)
         commit('setLoading', false)
         throw e
+      }
+    },
+    async updateAd ({ commit }, { title, description, id }) {
+      commit('clearError')
+      commit('setLoading', true)
+
+      try {
+        commit('setLoading', false)
+        const db = await getDatabase()
+        const databaseRef = await refDb(db, 'ads')
+        const updates = {}
+        updates[id + '/title'] = title
+        updates[id + '/description'] = description
+        await update(databaseRef, updates)
+
+        commit('updateAd', {
+          title, description, id
+        })
+      } catch (error) {
+        commit('setError', error.code)
+        commit('setLoading', false)
+        throw error
       }
     }
   },
@@ -114,17 +144,13 @@ export default {
       return state.ads
     },
     promoAds (state) {
-      return state.ads.filter(ad => {
-        return ad.promo
-      })
+      return state.ads.filter(ad => ad.promo)
     },
-    myAds (state) {
-      return state.ads
+    myAds (state, getters) {
+      return state.ads.filter(ad => ad.ownedId === getters.user.id)
     },
     adById (state) {
-      return adId => {
-        return state.ads.find(ad => ad.id === adId)
-      }
+      return adId => state.ads.find(ad => ad.id === adId)
     }
   }
 }
