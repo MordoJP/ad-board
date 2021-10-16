@@ -70,7 +70,7 @@
               <v-spacer></v-spacer>
 
               <v-btn text :to="'/ad/' + ad.id"> Open </v-btn>
-              <v-btn text class="indigo darken-3 white--text"> Buy </v-btn>
+              <app-buy-modal :ad="ad"></app-buy-modal>
             </v-card-actions>
 
             <v-expand-transition>

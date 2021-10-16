@@ -4,6 +4,7 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
+import BuyModalComponent from '@/components/Shared/BuyModal'
 import { initializeApp } from 'firebase/app'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { getDatabase } from 'firebase/database'
@@ -13,6 +14,7 @@ import Vuelidate from 'vuelidate'
 
 Vue.config.productionTip = false
 Vue.use(Vuelidate)
+Vue.component('AppBuyModal', BuyModalComponent)
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCgBnWY4urrWCbBfIzh7J-JKApB-2gKzxM',
